@@ -36,6 +36,14 @@ setup(
             'sybil',
             'testfixtures',
         ],
-        build=['furo', 'sphinx', 'setuptools-git', 'twine', 'wheel']
+        build=[
+            'build',
+            'furo',
+            'sphinx',
+            'setuptools',
+            'setuptools-git',
+            'twine',
+            'wheel',
+        ]
     ),
 )
