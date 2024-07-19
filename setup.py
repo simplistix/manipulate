@@ -38,6 +38,7 @@ setup(
         ],
         build=[
             'build',
+            'chardet',
             'furo',
             'sphinx',
             'setuptools',
