@@ -9,7 +9,7 @@ base_dir = os.path.dirname(__file__)
 
 setup(
     name='manipulate',
-    version='0.0.0.dev0',
+    version='0.0.0.dev1',
     author='Chris Withers',
     author_email='chris@withers.org',
     license='MIT',
