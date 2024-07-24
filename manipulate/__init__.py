@@ -1,2 +1,4 @@
-class Manipulator:
-    pass
+from .manipulator import Manipulator
+
+__all__ = ['Manipulator']
+
