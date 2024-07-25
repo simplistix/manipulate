@@ -2,7 +2,7 @@ from typing import Iterable
 
 from testfixtures import compare
 
-from manipulate.manipulator import Manipulator
+from manipulate import manipulate
 from manipulate.destinations import Memory as Destination
 from manipulate.elements import Element, Text
 from manipulate.sources import Memory as Source
@@ -10,7 +10,7 @@ from manipulate.sources import Memory as Source
 
 def test_no_actions() -> None:
     dest = Destination()
-    Manipulator()(
+    manipulate(
         Source(Text('one'), Text('one'), Text('one')),
         (),
         dest,
@@ -24,7 +24,7 @@ def test_single_action() -> None:
             yield Element(int(text.value))
 
     dest = Destination()
-    Manipulator()(
+    manipulate(
         Source(Text('1'), Text('2'), Text('3')),
         (parse,),
         dest,
