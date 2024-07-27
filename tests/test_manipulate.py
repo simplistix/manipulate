@@ -1,4 +1,4 @@
-from typing import Iterable
+from typing import Iterable, Any
 
 from testfixtures import compare
 
@@ -19,7 +19,7 @@ def test_no_actions() -> None:
 
 
 def test_single_action() -> None:
-    def parse(texts: Iterable[Text]) -> Iterable[Element[int]]:
+    def parse(texts: Iterable[Any]) -> Iterable[Element[int]]:
         for text in texts:
             yield Element(int(text.value))
 
