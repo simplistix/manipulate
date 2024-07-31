@@ -25,7 +25,7 @@ class DummyFormat(Format):
 class TestParse:
 
     def test_minimal(self) -> None:
-        table = Table(columns=None, rows=[Row({'x': 1})])
+        table = Table(columns=['x'], rows=[Row({'x': 1})])
 
         parse = Parse(DummyFormat(table))
         compare(
@@ -41,7 +41,7 @@ class TestParse:
         path = tmp_path / 'test.txt'
         path.write_text('x')
         files = Files([path])
-        table = Table(columns=None, rows=[Row({'x': 1})])
+        table = Table(columns=['x'], rows=[Row({'x': 1})])
 
         parse = Parse(DummyFormat(table))
         compare(
@@ -55,7 +55,7 @@ class TestParse:
 class TestRender:
 
     def test_minimal(self) -> None:
-        table = Table(columns=None, rows=[Row({'x': 1})])
+        table = Table(columns=['x'], rows=[Row({'x': 1})])
         render = Render(DummyFormat(table))
         compare(
             render(
@@ -87,8 +87,10 @@ class TestRender:
         )
 
     def test_rows_modified(self) -> None:
-        render = Render(DummyFormat(Table(columns=None, rows=[Row({'y': 1}), Row({'z': 2})])))
-        table = Table(columns=None, rows=[Row({'x': 1})])
+        render = Render(
+            DummyFormat(Table(columns=['x', 'y', 'z'], rows=[Row({'y': 1}), Row({'z': 2})]))
+        )
+        table = Table(columns=['x', 'y', 'z'], rows=[Row({'x': 1})])
         compare(
             render(
                 [
@@ -105,8 +107,8 @@ class TestRender:
 
     def test_pass_through_unhandled_elements(self) -> None:
         row = Row({'x': 1})
-        render = Render(DummyFormat(Table(columns=None, rows=[row])))
-        table = Table(columns=None, rows=[row])
+        render = Render(DummyFormat(Table(columns=['x'], rows=[row])))
+        table = Table(columns=['x'], rows=[row])
         compare(
             render(
                 [
@@ -125,33 +127,37 @@ class TestRender:
         )
 
     def test_double_start(self) -> None:
-        table1 = Table(columns=None, rows=[Row({'x': 1})])
-        table2 = Table(columns=None, rows=[Row({'x': 2})])
+        table1 = Table(columns=['x'], rows=[Row({'x': 1})])
+        table2 = Table(columns=['x'], rows=[Row({'x': 2})])
         render = Render(DummyFormat(table1))
         with ShouldRaise(
             ValueError(
-                "nested tables not supported, Start(value=Table(columns=None, rows=[{'x': 2}])) "
-                "before End(Table(columns=None, rows=[])) ended"
+                "nested tables not supported, "
+                "Start(value=Table(columns=['x'], rows=[{'x': 2}], types_location=None)) before "
+                "End(Table(columns=['x'], rows=[], types_location=None)) ended"
             )
         ):
             next(iter(render([Start(table1), Start(table2)])))
 
     def test_end_without_start(self) -> None:
-        table = Table(columns=None, rows=[Row({'x': 1})])
+        table = Table(columns=['x'], rows=[Row({'x': 1})])
         render = Render(DummyFormat(table))
         with ShouldRaise(
             ValueError(
-                "End(value=Table(columns=None, rows=[{'x': 1}])) "
-                "before Start(Table(columns=None, rows=[{'x': 1}]))"
+                "End(value=Table(columns=['x'], rows=[{'x': 1}], types_location=None)) "
+                "before Start(Table(columns=['x'], rows=[{'x': 1}], types_location=None))"
             )
         ):
             next(iter(render([End(table)])))
 
     def test_end_wrong_table(self) -> None:
-        table1 = Table(columns=None, rows=[Row({'x': 1})])
-        table2 = Table(columns=None, rows=[Row({'x': 2})])
+        table1 = Table(columns=['x'], rows=[Row({'x': 1})])
+        table2 = Table(columns=['x'], rows=[Row({'x': 2})])
         render = Render(DummyFormat(table1))
-        with ShouldRaise(ValueError(
-                "End(value=Table(columns=None, rows=[{'x': 2}])), "
-                "expected End(Table(columns=None, rows=[{'x': 1}]))")):
+        with ShouldRaise(
+            ValueError(
+                "End(value=Table(columns=['x'], rows=[{'x': 2}], types_location=None)), "
+                "expected End(Table(columns=['x'], rows=[{'x': 1}], types_location=None))"
+            )
+        ):
             next(iter(render([Start(table1), End(table2)])))
