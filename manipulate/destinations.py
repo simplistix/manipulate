@@ -22,29 +22,29 @@ class Files:
         path: Path | None = None
         try:
             for element in elements:
-                if isinstance(element, Start) and isinstance(e := element.value, File):
-                    if path is not None:
-                        raise ValueError(f'attempt to open {e.value} before {path} was closed')
-                    path = e.value
-                    if path.is_absolute():
-                        path_to_open = path
-                    else:
-                        if self.path is None:
-                            raise ValueError(f'no directory for {path}')
-                        path_to_open = self.path / path
-                    stream = path_to_open.open('w')
-                elif isinstance(element, Text):
-                    if stream is None:
-                        raise ValueError(f'no path specified to write {element}')
-                    stream.write(element.value)
-                elif isinstance(element, End) and isinstance(e := element.value, File):
-                    close_path = e.value
-                    if close_path != path or stream is None:
-                        raise ValueError(f'attempt to close {close_path} when {path} was open')
-                    stream.close()
-                    stream = path = None
-                else:
-                    raise TypeError(f"{type(self).__qualname__} can't handle {element}")
+                match element:
+                    case Start(File(start_path)):
+                        if path is not None:
+                            raise ValueError(f'attempt to open {start_path} before {path} was closed')
+                        path = start_path
+                        if path.is_absolute():
+                            path_to_open = path
+                        else:
+                            if self.path is None:
+                                raise ValueError(f'no directory for {path}')
+                            path_to_open = self.path / path
+                        stream = path_to_open.open('w')
+                    case Text(text):
+                        if stream is None:
+                            raise ValueError(f'no path specified to write {element}')
+                        stream.write(text)
+                    case End(File(close_path)):
+                        if close_path != path or stream is None:
+                            raise ValueError(f'attempt to close {close_path} when {path} was open')
+                        stream.close()
+                        stream = path = None
+                    case _:
+                        raise TypeError(f"{type(self).__qualname__} can't handle {element}")
         finally:
             if stream is not None:
                 stream.close()
