@@ -47,7 +47,7 @@ class TestFiles:
     def test_non_text_inside_file_element(self, tempdir: TempDirectory) -> None:
         files = Files()
         f = File(tempdir / 'foo.txt')
-        with ShouldRaise(TypeError("Files can't handle Element(value=1, parents=[])")):
+        with ShouldRaise(TypeError("Files can't handle Element(1)")):
             files.handle(generator(Start(f), Element[int](1), End(f)))
         tempdir.compare(['foo.txt'])
         compare(tempdir.read('foo.txt'), expected='')
@@ -55,7 +55,7 @@ class TestFiles:
     def test_text_before_element(self) -> None:
         files = Files()
         with ShouldRaise(
-            ValueError("no path specified to write Text(value='some text', parents=[])")
+            ValueError("no path specified to write Text('some text')")
         ):
             files.handle(generator(Text('some text')))
 
@@ -110,3 +110,6 @@ class TestFiles:
         file = File(Path('foo.txt'))
         with ShouldRaise(ValueError(f'no directory for foo.txt')):
             files.handle(generator(Start(file), Text('text'), End(file)))
+
+    def test_repr(self, tmp_path: Path) -> None:
+        compare(repr(Files(tmp_path)), expected=f"Files(path=PosixPath('{tmp_path}'))")

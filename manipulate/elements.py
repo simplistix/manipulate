@@ -5,10 +5,13 @@ from typing import TypeVar, Generic, Any
 T = TypeVar('T')
 
 
-@dataclass
+@dataclass()
 class Element(Generic[T]):
     value: T
     parents: list['Element[Any]'] = field(default_factory=list)
+
+    def __str__(self) -> str:
+        return f'{type(self).__qualname__}({self.value!r})'
 
 
 class Start(Element[T]):

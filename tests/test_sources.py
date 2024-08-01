@@ -22,6 +22,12 @@ class TestFiles:
             ),
         )
 
+    def test_str(self) -> None:
+        compare(str(Files([Path('foo')])), expected="Files")
+
+    def test_repr(self) -> None:
+        compare(repr(Files([Path('foo')])), expected="Files(paths=[PosixPath('foo')])")
+
 
 class TestStream:
 
@@ -45,3 +51,19 @@ class TestStream:
             capture_output=True,
         )
         compare(result.stdout, expected=b"(Text(value='some text', parents=[]),)\n")
+
+    def test_str_stringio(self) -> None:
+        compare(str(Stream(StringIO('some text'))), expected='Stream')
+
+    def test_str_stdin(self) -> None:
+        compare(str(Stream(sys.stdin)), expected='Stream')
+
+    def test_repr_stringio(self) -> None:
+        io = StringIO('some text')
+        compare(repr(Stream(io)), expected=f'Stream(stream={io!r})')
+
+    def test_repr_stdin(self) -> None:
+        compare(
+            repr(Stream(sys.stdin)),
+            expected="Stream(stream=<_io.TextIOWrapper name='<stdin>' mode='r' encoding='utf-8'>)",
+        )

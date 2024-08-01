@@ -20,6 +20,9 @@ class Files:
             yield Text(path.read_text(), parents=[file])
             yield End(file)
 
+    def __str__(self) -> str:
+        return type(self).__qualname__
+
 
 @dataclass
 class Stream:
@@ -27,6 +30,9 @@ class Stream:
 
     def elements(self) -> Iterable[Text]:
         return [Text(self.stream.read())]
+
+    def __str__(self) -> str:
+        return type(self).__qualname__
 
 
 class Memory:
