@@ -9,6 +9,8 @@ T = TypeVar('T')
 class Element(Generic[T]):
     value: T
     parent: 'Element[Any] | None' = None
+    line: int | None = None
+    column: int | None = None
 
     def __str__(self) -> str:
         return f'{type(self).__qualname__}({self.value!r})'

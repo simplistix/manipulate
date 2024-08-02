@@ -17,7 +17,7 @@ class Files:
         for path in self.paths:
             file = File(path)
             yield Start(file)
-            yield Text(path.read_text(), parent=file)
+            yield Text(path.read_text(), parent=file, line=0, column=0)
             yield End(file)
 
     def __str__(self) -> str:
@@ -29,7 +29,7 @@ class Stream:
     stream: IO[str]
 
     def elements(self) -> Iterable[Text]:
-        return [Text(self.stream.read())]
+        return [Text(self.stream.read(), line=0, column=0)]
 
     def __str__(self) -> str:
         return type(self).__qualname__

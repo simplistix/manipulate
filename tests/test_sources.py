@@ -18,7 +18,9 @@ class TestFiles:
         compare(
             files.elements(),
             expected=generator(
-                Start(File(path)), Text('some text', parent=File(path)), End(File(path))
+                Start(File(path)),
+                Text('some text', parent=File(path), line=0, column=0),
+                End(File(path)),
             ),
         )
 
@@ -35,7 +37,7 @@ class TestStream:
         stream = Stream(StringIO('some text'))
         compare(
             stream.elements(),
-            expected=generator(Text('some text')),
+            expected=generator(Text('some text', line=0, column=0)),
         )
 
     def test_stdin(self) -> None:
@@ -50,7 +52,9 @@ class TestStream:
             input=b'some text',
             capture_output=True,
         )
-        compare(result.stdout, expected=b"(Text(value='some text', parent=None),)\n")
+        compare(
+            result.stdout, expected=b"(Text(value='some text', parent=None, line=0, column=0),)\n"
+        )
 
     def test_str_stringio(self) -> None:
         compare(str(Stream(StringIO('some text'))), expected='Stream')
