@@ -1,7 +1,7 @@
 from dataclasses import dataclass
-from typing import Iterable, Any, TypeAlias, Callable, Type, TypeVar, Generic
+from typing import Iterable, Any, TypeAlias, Callable, Type, TypeVar, Generic, Mapping
 
-from .elements import Element, Start, End
+from .elements import Element, Start, End, Text, File
 
 Action: TypeAlias = Callable[[Iterable[Element[Any]]], Iterable[Element[Any]]]
 
@@ -26,6 +26,34 @@ class Container(Generic[T]):
                     if value is not current:
                         raise ValueError(f'attempt to close {value} when {current} was open')
                     current = None
+                    yield element
+                case _:
+                    yield element
+
+
+@dataclass
+class Classify:
+    """
+    Classify the text within files as a particular format
+    """
+
+    extensions: Mapping[str, Type[Text]]
+
+    def __call__(self, elements: Iterable[Element[Any]]) -> Iterable[Element[Any]]:
+        type_: Type[Text] | None = None
+        for element in Container(File)(elements):
+            match element:
+                case Start(File(path)):
+                    type_ = self.extensions.get(path.suffix)
+                    if type_ is None:
+                        raise ValueError(f"Unable to classify extension: {path.suffix!r}")
+                    yield element
+                case Text(value, parent, line, column):
+                    if type_ is None:
+                        raise ValueError(f'{element} is not within a File()')
+                    yield type_(value, parent, line, column)
+                case End(File(_)):
+                    type_ = None
                     yield element
                 case _:
                     yield element
