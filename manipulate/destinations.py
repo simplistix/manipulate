@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Protocol, Iterable, Any, TextIO
 
+from .actions import Container
 from .elements import Element, Start, File, Text, End
 
 
@@ -19,13 +20,10 @@ class Files:
 
     def handle(self, elements: Iterable[Element[Any]]) -> None:
         stream: TextIO | None = None
-        path: Path | None = None
         try:
-            for element in elements:
+            for element in Container(File)(elements):
                 match element:
                     case Start(File(start_path)):
-                        if path is not None:
-                            raise ValueError(f'attempt to open {start_path} before {path} was closed')
                         path = start_path
                         if path.is_absolute():
                             path_to_open = path
@@ -38,11 +36,10 @@ class Files:
                         if stream is None:
                             raise ValueError(f'no path specified to write {element}')
                         stream.write(text)
-                    case End(File(close_path)):
-                        if close_path != path or stream is None:
-                            raise ValueError(f'attempt to close {close_path} when {path} was open')
+                    case End(File(_)):
+                        assert stream is not None
                         stream.close()
-                        stream = path = None
+                        stream = None
                     case _:
                         raise TypeError(f"{type(self).__qualname__} can't handle {element}")
         finally:
