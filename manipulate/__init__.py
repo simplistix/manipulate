@@ -21,10 +21,12 @@ class Tracker:
         try:
             yield from elements
         except Exception as e:
-            breadcrumbs = ' -> '.join(
-                str(e) for e in chain(self.current_element.parents, (self.current_element,))
-            )
-            e.add_note(f'Performing {self.current_action} on {breadcrumbs}')
+            breadcrumbs = [self.current_element]
+            current = self.current_element
+            while current := current.parent:  # type: ignore[assignment]
+                breadcrumbs.append(current)
+            breadcrumb_text = ' -> '.join(str(e) for e in reversed(breadcrumbs))
+            e.add_note(f'Performing {self.current_action} on {breadcrumb_text}')
             raise
 
 

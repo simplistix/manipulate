@@ -8,7 +8,7 @@ T = TypeVar('T')
 @dataclass()
 class Element(Generic[T]):
     value: T
-    parents: list['Element[Any]'] = field(default_factory=list)
+    parent: 'Element[Any] | None' = None
 
     def __str__(self) -> str:
         return f'{type(self).__qualname__}({self.value!r})'

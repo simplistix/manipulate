@@ -17,7 +17,7 @@ class Files:
         for path in self.paths:
             file = File(path)
             yield Start(file)
-            yield Text(path.read_text(), parents=[file])
+            yield Text(path.read_text(), parent=file)
             yield End(file)
 
     def __str__(self) -> str:

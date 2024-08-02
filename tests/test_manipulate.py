@@ -63,8 +63,8 @@ def test_exception_in_action(
                         yield element
 
     e1 = Element(1)
-    e2 = Element(2, parents=[e1])
-    e3 = Element(3, parents=[e1, e2])
+    e2 = Element(2, parent=e1)
+    e3 = Element(3, parent=e2)
 
     expected_exception = Exception('boom!')
     expected_exception.add_note("Performing test_exception_in_action.<locals>." + expected_note)

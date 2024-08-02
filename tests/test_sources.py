@@ -18,7 +18,7 @@ class TestFiles:
         compare(
             files.elements(),
             expected=generator(
-                Start(File(path)), Text('some text', parents=[File(path)]), End(File(path))
+                Start(File(path)), Text('some text', parent=File(path)), End(File(path))
             ),
         )
 
@@ -50,7 +50,7 @@ class TestStream:
             input=b'some text',
             capture_output=True,
         )
-        compare(result.stdout, expected=b"(Text(value='some text', parents=[]),)\n")
+        compare(result.stdout, expected=b"(Text(value='some text', parent=None),)\n")
 
     def test_str_stringio(self) -> None:
         compare(str(Stream(StringIO('some text'))), expected='Stream')
