@@ -12,8 +12,16 @@ class Element(Generic[T]):
     line: int | None = None
     column: int | None = None
 
+    def _value_repr(self) -> str:
+        return repr(self.value)
+
     def __str__(self) -> str:
-        return f'{type(self).__qualname__}({self.value!r})'
+        text = f'{type(self).__qualname__}({self._value_repr()})'
+        if self.line:
+            text += f' at line {self.line}'
+        if self.column:
+            text += f', column {self.column}'
+        return text
 
 
 class Start(Element[T]):
@@ -32,6 +40,10 @@ class Bytes(Element[bytes]):
     pass
 
 
+MAX_TEXT_STR_SIZE = 50
+TEXT_STR_ABBREVIATED_SIZE = int(MAX_TEXT_STR_SIZE / 2)
+
+
 @dataclass
 class Text(Element[str]):
     """
@@ -41,3 +53,9 @@ class Text(Element[str]):
     """
 
     prefix: str = ''
+
+    def _value_repr(self) -> str:
+        text = self.value
+        if len(text) > MAX_TEXT_STR_SIZE:
+            text = text[:TEXT_STR_ABBREVIATED_SIZE] + '...' + text[-TEXT_STR_ABBREVIATED_SIZE:]
+        return repr(text)
