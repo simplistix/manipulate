@@ -53,7 +53,8 @@ class TestStream:
             capture_output=True,
         )
         compare(
-            result.stdout, expected=b"(Text(value='some text', parent=None, line=1, column=1),)\n"
+            result.stdout,
+            expected=b"(Text(value='some text', parent=None, line=1, column=1, prefix=''),)\n",
         )
 
     def test_str_stringio(self) -> None:

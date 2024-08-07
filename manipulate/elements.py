@@ -32,4 +32,12 @@ class Bytes(Element[bytes]):
     pass
 
 
+@dataclass
 class Text(Element[str]):
+    """
+    A textual element. If it is embedded within another textual element or file,
+    it may have a prefix specified, if that prefix occurs before every line making
+    up this element.
+    """
+
+    prefix: str = ''

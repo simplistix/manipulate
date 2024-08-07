@@ -10,21 +10,21 @@ from manipulate.elements import Text, Start, Element, End, File
 def should_raise_on_iter(elements: Iterable[Element[Any]], expected: Exception) -> None:
     with ShouldRaise(expected):
         next(iter(elements))
+class SampleText(Text):
+    pass
 
 
 class TestClassify:
 
     def test_single(self) -> None:
-        class MyText(Text):
-            pass
 
         file = File(Path('foo.bar'))
-        classify = Classify({'.bar': MyText})
+        classify = Classify({'.bar': SampleText})
         compare(
             classify([Start(file), Text('content', parent=file, line=1, column=2), End(file)]),
             expected=generator(
                 Start(file),
-                MyText('content', parent=file, line=1, column=2),
+                SampleText('content', parent=file, line=1, column=2, prefix=''),
                 End(file),
             ),
         )
@@ -53,11 +53,11 @@ class TestClassify:
             ),
             expected=generator(
                 Start(bar_file),
-                BarText('content', parent=bar_file, line=1, column=1),
+                BarText('content', parent=bar_file, line=1, column=1, prefix=''),
                 End(bar_file),
                 Start(baz_file),
-                BazText('line 1\n', parent=baz_file, line=1, column=1),
-                BazText('line 2\n', parent=baz_file, line=2, column=1),
+                BazText('line 1\n', parent=baz_file, line=1, column=1, prefix=''),
+                BazText('line 2\n', parent=baz_file, line=2, column=1, prefix=''),
                 End(baz_file),
             ),
         )
