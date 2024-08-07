@@ -1,4 +1,3 @@
-from itertools import chain
 from typing import Sequence, Any, Iterable
 
 from .actions import Action
