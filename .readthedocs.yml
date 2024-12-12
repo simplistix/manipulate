@@ -8,6 +8,6 @@ python:
     - method: pip
       path: .
       extra_requirements:
-         - build
+         - docs
 sphinx:
   fail_on_warning: true

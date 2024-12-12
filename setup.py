@@ -36,13 +36,11 @@ setup(
             'sybil',
             'testfixtures',
         ],
-        build=[
-            'build',
-            'chardet',
+        docs=[
             'furo',
             'sphinx',
-            'setuptools',
-            'setuptools-git',
+        ],
+        release=[
             'twine',
             'wheel',
         ]
