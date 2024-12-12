@@ -1,7 +1,7 @@
 version: 2.1
 
 orbs:
-  python: cjw296/python-ci@4.1
+  python: cjw296/python-ci@5.1
 
 common: &common
   jobs:
@@ -14,6 +14,7 @@ common: &common
               - cimg/python:3.12
 
     - python/typing:
+        name: typing
         packages: manipulate tests
         image: cimg/python:3.12
 
@@ -22,11 +23,24 @@ common: &common
         requires:
           - python/pip-run-tests
 
+    - python/pip-setuptools-build-package:
+        name: package
+        requires:
+          - typing
+          - coverage
+
+    - python/check-package:
+        name: check-package
+        package: manipulate
+        typed: true
+        requires:
+          - package
+
     - python/release:
         name: release
         config: .carthorse.yml
         requires:
-          - coverage
+          - check-package
         filters:
           branches:
             only: master
